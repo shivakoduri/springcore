@@ -4,6 +4,7 @@ import com.myprojects.spring.springcore.domain.AbstractDomainClass;
 import com.myprojects.spring.springcore.domain.User;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class Role extends AbstractDomainClass {
 
     private String role;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable
     // ~ defaults to @JoinTable(name = "USER_ROLE", joinColumns = @JoinColumn(name = "role_id"),
     //     inverseJoinColumns = @joinColumn(name = "user_id"))

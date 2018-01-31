@@ -1,5 +1,7 @@
 package com.myprojects.spring.springcore.services.reposervices;
 
+import com.myprojects.spring.springcore.commands.CustomerForm;
+import com.myprojects.spring.springcore.converters.CustomerFormToCustomer;
 import com.myprojects.spring.springcore.domain.Customer;
 import com.myprojects.spring.springcore.repositories.CustomerRepository;
 import com.myprojects.spring.springcore.services.CustomerService;
@@ -15,10 +17,16 @@ import java.util.List;
 public class CustomerServiceRepoImpl implements CustomerService {
 
     private CustomerRepository customerRepository;
+    private CustomerFormToCustomer customerFormToCustomer;
 
     @Autowired
     public void setCustomerRepository(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
+    }
+
+    @Autowired
+    public void setCustomerFormToCustomer(CustomerFormToCustomer customerFormToCustomer) {
+        this.customerFormToCustomer = customerFormToCustomer;
     }
 
     @Override
@@ -36,6 +44,19 @@ public class CustomerServiceRepoImpl implements CustomerService {
     @Override
     public Customer saveOrUpdate(Customer domainObject) {
         return customerRepository.save(domainObject);
+    }
+
+    @Override
+    public Customer saveOrUpdateCustomerForm(CustomerForm customerForm) {
+        Customer newCustomer = customerFormToCustomer.convert(customerForm);
+
+        if(newCustomer.getUser().getId() != null){
+            Customer existingCustomer = getById(newCustomer.getId());
+
+            newCustomer.getUser().setEnabled(existingCustomer.getUser().getEnabled());
+        }
+
+        return saveOrUpdate(newCustomer);
     }
 
     @Override

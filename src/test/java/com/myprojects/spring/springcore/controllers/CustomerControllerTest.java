@@ -1,6 +1,8 @@
 package com.myprojects.spring.springcore.controllers;
 
 import com.myprojects.spring.springcore.commands.CustomerForm;
+import com.myprojects.spring.springcore.commands.validators.CustomerFormValidator;
+import com.myprojects.spring.springcore.converters.CustomerToCustomerForm;
 import com.myprojects.spring.springcore.domain.Address;
 import com.myprojects.spring.springcore.domain.Customer;
 import com.myprojects.spring.springcore.domain.User;
@@ -35,6 +37,8 @@ public class CustomerControllerTest {
     @Before
     public void setup(){
         MockitoAnnotations.initMocks(this);
+        customerController.setCustomerFormValidator(new CustomerFormValidator());
+        customerController.setCustomerToCustomerForm(new CustomerToCustomerForm());
 
         mockMvc = MockMvcBuilders.standaloneSetup(customerController).build();
     }
@@ -69,12 +73,16 @@ public class CustomerControllerTest {
     public void testEdit() throws Exception {
         Integer id = 1;
 
-        when(customerService.getById(id)).thenReturn(new Customer());
+        User user = new User();
+        Customer customer = new Customer();
+        customer.setUser(user);
+
+        when(customerService.getById(id)).thenReturn(customer);
 
         mockMvc.perform(get("/customer/edit/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("customer/customerform"))
-                .andExpect(model().attribute("customer", instanceOf(Customer.class)));
+                .andExpect(model().attribute("customerForm", instanceOf(CustomerForm.class)));
     }
 
     @Test
@@ -84,7 +92,7 @@ public class CustomerControllerTest {
         mockMvc.perform(get("/customer/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("customer/customerform"))
-                .andExpect(model().attribute("customer", instanceOf(Customer.class)));
+                .andExpect(model().attribute("customerForm", instanceOf(CustomerForm.class)));
     }
 
     @Test

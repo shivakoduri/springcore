@@ -1,5 +1,7 @@
 package com.myprojects.spring.springcore.services.reposervices;
 
+import com.myprojects.spring.springcore.commands.ProductForm;
+import com.myprojects.spring.springcore.converters.ProductFormToProduct;
 import com.myprojects.spring.springcore.domain.Product;
 import com.myprojects.spring.springcore.repositories.ProductRepository;
 import com.myprojects.spring.springcore.services.ProductService;
@@ -15,12 +17,17 @@ import java.util.List;
 public class ProductServiceRepoImpl implements ProductService {
 
     private ProductRepository productRepository;
+    private ProductFormToProduct productFormToProduct;
 
     @Autowired
     public void setProductRepository(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
+    @Autowired
+    public void setProductFormToProduct(ProductFormToProduct productFormToProduct) {
+        this.productFormToProduct = productFormToProduct;
+    }
     @Override
     public List<?> listAll() {
         List<Product> products = new ArrayList<>();
@@ -31,6 +38,11 @@ public class ProductServiceRepoImpl implements ProductService {
     @Override
     public Product getById(Integer id) {
         return productRepository.findOne(id);
+    }
+
+    @Override
+    public Product saveOrUpdateProductForm(ProductForm productForm) {
+        return saveOrUpdate(productFormToProduct.convert(productForm));
     }
 
     @Override

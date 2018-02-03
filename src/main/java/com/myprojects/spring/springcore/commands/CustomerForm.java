@@ -1,10 +1,14 @@
 package com.myprojects.spring.springcore.commands;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class CustomerForm {
     private Integer userId;
     private Integer userVersion;
     private Integer customerId;
     private Integer customerVersion;
+
+    @NotEmpty
     private String userName;
     private String passwordText;
     private String passwordTextConf;

@@ -4,6 +4,7 @@ import com.myprojects.spring.springcore.domain.User;
 import com.myprojects.spring.springcore.repositories.CustomerRepository;
 import com.myprojects.spring.springcore.repositories.UserRepository;
 import com.myprojects.spring.springcore.services.UserService;
+import com.myprojects.spring.springcore.services.security.EncryptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,13 @@ public class UserServiceRepoImpl implements UserService {
         this.customerRepository = customerRepository;
     }
 
+    private EncryptionService encryptionService;
+
+    @Autowired
+    public void setEncryptionService(EncryptionService encryptionService) {
+        this.encryptionService = encryptionService;
+    }
+
     @Override
     public List<?> listAll() {
         List<User> users = new ArrayList<>();
@@ -43,6 +51,9 @@ public class UserServiceRepoImpl implements UserService {
 
     @Override
     public User saveOrUpdate(User domainObject) {
+        if(domainObject.getPassword() != null){
+            domainObject.setEncryptedPassword(encryptionService.encryptString(domainObject.getPassword()));
+        }
         return userRepository.save(domainObject);
     }
 
